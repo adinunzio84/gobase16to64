@@ -1,0 +1,178 @@
+We want to read byte-by-byte of our base-16 message, stopping as soon as there aren't any bytes left.
+
+Read16()
+ // this reads the next byte in the string and reduces it to 4 bits, returns as a byte
+
+for i := 0; i < len(base16bytes) / 2; i++ {
+  byte = (Read16() << 4) + Read16()
+}
+
+// 00001010 01101001 11001011 00110100
+
+[]
+Read:
+0000
+shift two left
+(0000xx)
+|1010 01101001 11001011 00110100|
+
+
+Read:
+1010
+(000010) // shift two right
+store
+[000010]
+
+|01101001 11001011 00110100|
+
+
+
+
+
+
+
+
+
+
+
+stored = 0 // bits stored
+buffer = 0 // stored value
+const b1100 byte = 12 // 12 is 1100
+const b0011 byte = 3
+
+
+read16()    
+    Reads 4 bits -> byte
+        Stored = 0:
+            // 0000YYYY to
+            // 00YYYYxx   xx will be filled & value stored in subsequent read
+            buffer = byte << 2
+            stored = 4
+        Stored = 4:
+            save: buffer + (byte >> 2)
+            // for buffer, we want the bottom 2 00ddXXYY
+            // we want YY to be in dd with the rest 0s
+            // could just shift over 4, then do (buffer&00111111 + byte)
+            buffer = (byte & b0011) << 4
+            stored = 2
+        Stored = 2:
+            save: buffer + byte
+            stored = 0
+        
+        
+
+
+
+Table := `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/`
+Save (dst []byte, index int, val int):
+    // method to store a 6-bit number into the byte array, but as the proper base64 character (arbitrarily chosen to be the table from wikipedia)
+    dst[index] = Table[val]
+
+
+	//var size int = len(src16)/2 * 2/3
+	/*
+		0											len%3 = 1		1->3(1)
+		0000
+		0000 saved: 4
+		A==
+
+		01											len%3 = 2		2->3(2)
+		0000 0001
+		000000 01(00|00) saved: 2
+		AQ=
+
+		012											len%3 = 0		3->2(2)
+		0000 0001 0010
+		000000 010010 saved: 0
+		AS
+
+		------------------------------------------------
+
+		0123										len%3 = 1		4->5(3)
+		0000 0001 0010 0011
+		000000 010010 0011 saved: 4
+		000000 010010 0011(00) leftover: 2
+		  A       S      M
+		ASM==
+
+		01234										len%3 = 2		5->5(4)
+		0000 0001 0010 0011 0100
+		000000 010010 001101 00 saved: 2
+		000000 010010 001101 00(0000) leftover: 4
+		ASNA=
+
+		012345										len%3 = 0		6->4(4)
+		0000 0001 0010 0011 0100 0101
+		000000 010010 001101 000101
+		ASNF
+
+		------------------------------------------------
+
+		0123456										len%3 = 1		7->7(5)
+		0000 0001 0010 0011 0100 0101 0110
+		000000 010010 001101 000101 0110 saved: 4
+		ASNFY==
+
+		01234567									len%3 = 2		8->7(6)
+		0000 0001 0010 0011 0100 0101 0110 0111
+		000000 010010 001101 000101 011001 11 saved: 2
+		ASNFZw=
+
+		012345678									len%3 = 2		9->6(6)
+		0000 0001 0010 0011 0100 0101 0110 0111 1000
+		000000 010010 001101 000101 011001 111000 saved: 0
+		ASNFZ4
+
+
+    1->1        2   0       4   1   (n+1)*2/3 + (3-n % 3)
+    2->2        4   1       6   2
+    3->2        6   2       8   2
+
+    4->3        8   2       10  3
+    5->4        10  3       12  4
+    6->4        12  4       14  4
+
+    7->5        14  4       16  5
+    8->6        16  5       18  6
+    9->6        18  6       20  6
+
+    10->7
+    11->8
+    12->8
+
+    1 -> 2  
+    2 -> 1
+    0 -> 0
+
+    (3-n % 3)
+
+
+
+	*/
+
+
+
+
+
+
+
+
+
+
+
+	/*
+	Opposite direction: base64 encoding to base16 encoding
+
+	First, if it ends in ==, that means there were 4 stored bits stored in the buffer used to encode into base64
+		Our buffer is only used for 6-bit numbers
+		So the bottom 2 were discarded.
+	If it ends in =, that means there were 2 stored bits in the buffer used to encode into base64
+		So the bottom 4 were discarded.
+	
+	This means we should ignore the last 2 bits if it ends in == and the last 4 bits if it ends in =
+		while encoding back into base16
+	
+
+
+
+	*/
