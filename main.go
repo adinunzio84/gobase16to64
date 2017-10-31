@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	const strSize int = 4
+	const strSize int = 1000000000
 
 	fmt.Println("=======================================================")
 
@@ -29,7 +29,7 @@ func main() {
 
 	fmt.Println("CONVERTING BASE 16 to BASE 64")
 	start := time.Now()
-	b64 := base16to64(str)
+	b64 := Base16to64(str)
 	runTime := time.Since(start)
 	fmt.Println("time: ", runTime)
 
@@ -45,7 +45,7 @@ func main() {
 
 	fmt.Println("CONVERTING BASE 64 BACK TO BASE 16")
 	start = time.Now()
-	b16 := base64to16(b64)
+	b16 := Base64to16(b64)
 	runTime = time.Since(start)
 	fmt.Println("time: ", runTime)
 
@@ -75,5 +75,5 @@ func main() {
 	} else {
 		fmt.Println("FAIL! The result string does NOT match the initial string!")
 	}
-	
+
 }
