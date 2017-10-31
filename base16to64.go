@@ -24,7 +24,8 @@ var b16map = map[byte]byte{
 	byte('f'): 15,
 }
 
-func base16to64(src16 []byte) []byte {
+// Base16to64 converts a string in base16 encoding (lower-case a-f only) to Base64 encoding.
+func Base16to64(src16 []byte) []byte {
 
 	if src16 == nil {
 		return nil
@@ -72,6 +73,7 @@ func base16to64(src16 []byte) []byte {
 
 // CONVERT BASE 64 encoding to BASE 16 encoding:
 
+// This is also SLOW.
 var b64table = map[byte]byte{
 	byte('A'): 0,
 	byte('B'): 1,
@@ -142,7 +144,8 @@ var b64table = map[byte]byte{
 var b16table = []byte(`0123456789abcdef`)
 var b1111 byte = 15
 
-func base64to16(src64 []byte) []byte {
+// Base64to16 converts a string in Base64 encoding to a base16 encoding.
+func Base64to16(src64 []byte) []byte {
 
 	if src64 == nil {
 		return nil
@@ -159,7 +162,6 @@ func base64to16(src64 []byte) []byte {
 	} else if n >= 1 && src64[n-1] == byte('=') {
 		nEq = 1
 	}
-	// fmt.Println("nEq:", nEq)
 	n -= nEq // don't bother reading the equal signs
 
 	dst := make([]byte, (n*3/2)-(nEq%2)) // see SCRATCHWORK
@@ -168,45 +170,28 @@ func base64to16(src64 []byte) []byte {
 	var stored byte
 	var buffer byte
 
-	// fmt.Println("srcIndex:", srcIndex, "n:", n)
-	// fmt.Println("------------------------------------")
 	for srcIndex < n {
-		// if stored != 0 {
-		// 	fmt.Printf("Stored: %d Buffer: %04b\n", stored, buffer)
-		// } else {
-		// 	fmt.Printf("Stored: %d Buffer: XXXX\n", stored)
-		// }
 		switch stored {
 		case 0:
 			b := b64table[src64[srcIndex]]
 			srcIndex++
-			// fmt.Println("Storing:", b16table[b>>2])
 			dst[dstIndex] = b16table[b>>2]
 			buffer = (b & b0011) << 2
 			stored = 2
-			// fmt.Println("srcIndex:", srcIndex, "n:", n)
 		case 2:
 			b := b64table[src64[srcIndex]]
 			srcIndex++
-			// fmt.Println("Storing:", b16table[b>>2])
 			dst[dstIndex] = b16table[buffer+(b>>4)]
 			buffer = b & b1111
 			stored = 4
-			// fmt.Println("srcIndex:", srcIndex, "n:", n)
 		case 4:
-			// fmt.Println("Storing:", b16table[buffer])
 			dst[dstIndex] = b16table[buffer]
 			stored = 0
 		}
 		dstIndex++
-		// fmt.Println("------------------------------------")
 	}
-	// fmt.Println("POST loop")
-	// fmt.Printf("Stored: %d Buffer: %04b\n", stored, buffer)
 	if stored == 4 && nEq != 1 {
-		// fmt.Println("Storing:", b16table[buffer])
 		dst[dstIndex] = b16table[buffer]
 	}
-	// fmt.Println("------------------------------------")
 	return dst
 }
