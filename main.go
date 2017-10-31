@@ -8,7 +8,9 @@ import (
 
 func main() {
 
-	const strSize int = 1000
+	const strSize int = 4
+
+	fmt.Println("=======================================================")
 
 	// generate a random string of hex chars
 	fmt.Println("GENERATING RANDOM NUMBERS")
@@ -22,6 +24,8 @@ func main() {
 			str[i] = byte(val - 10 + 97) // 97 is a
 		}
 	}
+	fmt.Println("Done!")
+	fmt.Println("=======================================================")
 
 	fmt.Println("CONVERTING BASE 16 to BASE 64")
 	start := time.Now()
@@ -30,19 +34,14 @@ func main() {
 	fmt.Println("time: ", runTime)
 
 	if len(b64) <= 100 {
-		fmt.Println("=======================================================")
-		fmt.Printf("%s\n", str)
-		fmt.Println("=======================================================")
-		fmt.Printf("%s\n", b64)
-		fmt.Println(b64)
-		fmt.Println("=======================================================")
+		fmt.Printf("b16: %s\n", str)
+		fmt.Printf("b64: %s\n", b64)
+		fmt.Printf("b64: %v\n", b64)
 	}
 
-	fmt.Println("*******************************************************")
-	fmt.Println("=======================================================")
-	fmt.Println("*******************************************************")
+	fmt.Printf("SIZE: %d => %d\n", len(str), len(b64))
 
-	fmt.Printf("%d => %d\n", len(str), len(b64))
+	fmt.Println("=======================================================")
 
 	fmt.Println("CONVERTING BASE 64 BACK TO BASE 16")
 	start = time.Now()
@@ -51,21 +50,30 @@ func main() {
 	fmt.Println("time: ", runTime)
 
 	if len(b64) <= 100 {
-		fmt.Println("=======================================================")
-		fmt.Printf("%s\n", b64)
-		fmt.Println("=======================================================")
-		fmt.Printf("%s\n", b16)
-		fmt.Println(b16)
-		fmt.Println("=======================================================")
+		fmt.Printf("b64: %s\n", b64)
+		fmt.Printf("b16: %s\n", b16)
+		fmt.Printf("b16: %v\n", b16)
 	}
 
-	fmt.Printf("%d => %d\n", len(b64), len(b16))
+	fmt.Printf("SIZE: %d => %d\n", len(b64), len(b16))
 
-	// b16 := []byte(`0000`)
-	// b64 := base16to64(b16)
-	// fmt.Printf("\"%s\" => \"%s\"\n\n", b16, b64)
+	fmt.Println("=======================================================")
 
-	// newb16 := base64to16(b64)
-	// fmt.Printf("\n\"%s\" => \"%s\"\n", b64, newb16)
-
+	fmt.Println("TEST FOR EQUALITY")
+	var eq = true
+	if len(b16) != len(str) {
+		eq = false
+	} else {
+		for i := 0; i < len(str); i++ {
+			if b16[i] != str[i] {
+				eq = false
+			}
+		}
+	}
+	if eq == true {
+		fmt.Println("SUCCESS! End result matches initial string!")
+	} else {
+		fmt.Println("FAIL! The result string does NOT match the initial string!")
+	}
+	
 }

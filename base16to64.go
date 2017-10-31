@@ -162,7 +162,7 @@ func base64to16(src64 []byte) []byte {
 	// fmt.Println("nEq:", nEq)
 	n -= nEq // don't bother reading the equal signs
 
-	dst := make([]byte, 1000)
+	dst := make([]byte, (n*3/2)-(nEq%2)) // see SCRATCHWORK
 	var srcIndex int
 	var dstIndex int
 	var stored byte
